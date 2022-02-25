@@ -1,0 +1,1 @@
+{"type": 1, "parameters": {"num_classes": 8, "input_sizes": [512, 512, 512, 512], "embrace_size": 512, "docker_architecture": [[512], [512], [512], [512]], "finalouts": false, "device": "", "use_ll": true, "ll_config": [256, "D", 128, "D", "R", 8], "trainable_probs": false}}
