@@ -1,4 +1,3 @@
-from tabnanny import verbose
 from sentence_transformers import SentenceTransformer
 import pandas as pd
 import numpy as np
@@ -18,15 +17,16 @@ def predict_emotions_text(sentence, verbose = False):
     models = ['roberta-large-nli-stsb-mean-tokens', 'distilbert-base-nli-mean-tokens', 'bert-large-nli-stsb-mean-tokens']
     embeddings = []
     classifiers = []
+    sentences = [sentence]
     for model_name in models :
         model = SentenceTransformer(model_name)
-        sentence_embeddings = model.encode(sentence)
+        sentence_embeddings = model.encode(sentences)
         # We use the same models trained in the experimental phase
-        clf = pickle.load(open('models/Audio/{0}.clf'.format(model_name),'rb'))
+        clf = pickle.load(open('SentiLib/assets/{0}.clf'.format(model_name),'rb'))
         embeddings.append(clf.predict(sentence_embeddings))
 
     weak_predictions = [np.concatenate((embeddings[0][i], np.concatenate((embeddings[1][i], embeddings[2][i]), axis=0)), axis=0) for i in range(len(embeddings[0]))]
-    clf = pickle.load(open('models/Audio/{0}.clf'.format('Meta_learner'),'rb'))
+    clf = pickle.load(open('SentiLib/assets/{0}.clf'.format('Meta_learner'),'rb'))
     pred = clf.predict(weak_predictions)[0]
 
     emotions = ["anger","anticipation","disgust","fear","joy","love","optimism","pessimism","sadness","surprise","trust"]
@@ -36,7 +36,7 @@ def predict_emotions_text(sentence, verbose = False):
     if verbose:
         print(result)
 
-    return pred
+    return result
 
 
 def extract_audio(filepath):

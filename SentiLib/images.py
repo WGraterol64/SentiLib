@@ -1,8 +1,8 @@
-import images_dependencies
+from images_dependencies import Arguments, Processor
 
 def predict_emotion_image(filepath, verbose = False):
-    args = images_dependencies.Arguments(inputfile = filepath)
-    processor = images_dependencies.Processor(args)
+    args = Arguments(inputfile = filepath)
+    processor = Processor(args)
     pred = processor.start()
     emotions = ['joy','trust','fear','surprise','sadness','disgust','anger','anticipation']
     pred_dict = {}

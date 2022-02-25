@@ -2,18 +2,18 @@ import numpy as np
 import pandas as pd
 import torch
 import pickle
-import text 
-import images 
+from text import predict_emotions_text
+from images import predict_emotion_image
 from multimodal_dependencies import FusionTransformer, EmbraceNet, Wrapper
 
 def activate(t):
     return (t >= 0.1).int().tolist()[0]
 
 def predict_multimodal(sentence, filepath, verbose = False):
-    text_prediction_json = text.predict_emotions_text(sentence, verbose=verbose)
-    image_prediction_json = images.predict_emotion_image(filepath, verbose=verbose)
+    text_prediction_json = predict_emotions_text(sentence, verbose=False)
+    image_prediction_json = predict_emotion_image(filepath, verbose=False)
 
-    with open('models/Fusion/fusion_model.pt', 'rb') as dic:
+    with open('SentiLib/assets/fusion_model.pt', 'rb') as dic:
         multimodal_model = pickle.load(dic)
     
     image_vect = torch.from_numpy(np.array([[float(image_prediction_json["joy"]),float(image_prediction_json["sadness"]),float(image_prediction_json["anger"]),float(image_prediction_json["fear"]),float(image_prediction_json["surprise"]),float(image_prediction_json["anticipation"]),float(image_prediction_json["disgust"]),float(image_prediction_json["trust"])]])).float()
@@ -24,8 +24,10 @@ def predict_multimodal(sentence, filepath, verbose = False):
 
     emotions = ["joy","sadness","anger","fear","surprise","anticipation","disgust","trust"]
     output = {}
-    for k in emotions:
-        output[emotions[k]] = prediction[k]
 
+    for k in range(len(emotions)):
+        output[emotions[k]] = prediction[k]
+    if verbose:
+        print(output)
     return output
 
