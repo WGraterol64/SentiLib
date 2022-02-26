@@ -50,7 +50,7 @@ def extract_audio(filepath):
         print("Exception: " + str(e))
         return 'ERROR'
 
-def predict_emotions_audio(filepath, vector_multimodal = False):
+def predict_emotions_audio(filepath, verbose = False):
 
     phrase = extract_audio(filepath)
     if phrase == 'ERROR':
