@@ -14,15 +14,15 @@ from tqdm import tqdm
 from deepface import DeepFace
 from deepface.detectors.RetinaFaceWrapper import build_model, detect_face
 
-from image_utils.utils.dataset import Emotic_MultiDB, Rescale, RandomCrop, ToTensor, my_collate
-from image_utils.utils.traineval import train_step, eval
-from image_utils.utils.mat2py import get_skeleton_data
-from image_utils.models.fusion_model import MergeClass
-from image_utils.models.face_net import ShortVGG as VGG
-from image_utils.models.context_net import resnet18 as ABN
-from image_utils.models.skeleton_net import Model as DGCNN
-from image_utils.models.YOLOv3 import YOLOv3
-from image_utils.models.basic_HRnet import SimpleHRNet as HRnet
+from SentiLib.image_utils.utils.dataset import Emotic_MultiDB, Rescale, RandomCrop, ToTensor, my_collate
+from SentiLib.image_utils.utils.traineval import train_step, eval
+from SentiLib.image_utils.utils.mat2py import get_skeleton_data
+from SentiLib.image_utils.models.fusion_model import MergeClass
+from SentiLib.image_utils.models.face_net import ShortVGG as VGG
+from SentiLib.image_utils.models.context_net import resnet18 as ABN
+from SentiLib.image_utils.models.skeleton_net import Model as DGCNN
+from SentiLib.image_utils.models.YOLOv3 import YOLOv3
+from SentiLib.image_utils.models.basic_HRnet import SimpleHRNet as HRnet
 
 original_cats = ['Affection', 'Anger', 'Annoyance', 'Anticipation', 'Aversion', 'Confidence', 'Disapproval',
                 'Disconnection', 'Disquietment', 'Doubt/Confusion', 'Embarrassment', 'Engagement', 'Esteem',
@@ -103,9 +103,6 @@ class Processor:
             self.device = torch.device('cuda')
         else:
             self.device = torch.device('cuda:' + str(self.Arguments.cuda))  # chek it works
-        
-        if not os.path.exists('./checkpoints'):
-            os.mkdir('checkpoints')
         
         self.mode = None
         self.dataset_root = None
@@ -204,13 +201,13 @@ class Processor:
         return config
     
     def get_data_modalities(self, image, use_tiny_yolo=False):
-        yolo_class_path="checkpoints/YOLO/coco.names"
+        yolo_class_path="SentiLib/image_utils/checkpoints/YOLO/coco.names"
         if use_tiny_yolo:
-            yolo_model_def ="checkpoints/YOLO/yolov3-tiny.cfg"
-            yolo_weights_path="checkpoints/YOLO/YOLO-weights/yolov3-tiny.weights"
+            yolo_model_def ="SentiLib/image_utils/checkpoints/YOLO/yolov3-tiny.cfg"
+            yolo_weights_path="SentiLib/image_utils/checkpoints/YOLO/YOLO-weights/yolov3-tiny.weights"
         else:
-            yolo_model_def="checkpoints/YOLO/yolov3.cfg"
-            yolo_weights_path="checkpoints/YOLO/YOLO-weights/yolov3.weights"
+            yolo_model_def="SentiLib/image_utils/checkpoints/YOLO/yolov3.cfg"
+            yolo_weights_path="SentiLib/image_utils/checkpoints/YOLO/YOLO-weights/yolov3.weights"
         detector = YOLOv3(model_def=yolo_model_def, class_path=yolo_class_path,
                     weights_path=yolo_weights_path, classes=('person',),
                     max_batch_size=16, device=self.device)
@@ -218,7 +215,7 @@ class Processor:
         if detections is None:
             return []
         fa_model = build_model()
-        cpw48_dir = 'checkpoints/hrnet_w48_384x288.pth'
+        cpw48_dir = 'SentiLib/image_utils/checkpoints/hrnet_w48_384x288.pth'
         pose_model = HRnet(48, 17, cpw48_dir, multiperson=False, max_batch_size=2)
 
         all_data = []
@@ -294,11 +291,11 @@ class Arguments:
                  mode= 'inference', 
                  unimodal = False, 
                  modality= 'all', 
-                 configuration= '/content/drive/MyDrive/Thesis/Modelos/JuanPablo/configs/embracenet_plus.json',
-                 unimodels= '/content/drive/MyDrive/Thesis/Modelos/JuanPablo/checkpoints/unimodals/',
+                 configuration= 'SentiLib/image_utils/configs/embracenet_plus.json',
+                 unimodels= 'SentiLib/image_utils/checkpoints/unimodals/',
                  pretrained= True,
-                 multimodel= '/content/drive/MyDrive/Thesis/Modelos/JuanPablo/checkpoints/multimodal/PP_all_mergenew_last.pth',
-                 threshold= '/content/drive/MyDrive/Thesis/Modelos/JuanPablo/checkpoints/thresholds_validation.npy'):
+                 multimodel= 'SentiLib/image_utils/checkpoints/multimodal/PP_all_mergenew_last.pth',
+                 threshold= 'SentiLib/image_utils/checkpoints/thresholds_validation.npy'):
         self.cuda = cuda
         self.inputfile = inputfile
         self.unimodal = unimodal

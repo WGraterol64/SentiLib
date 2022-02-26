@@ -6,7 +6,7 @@ from rdflib.namespace import FOAF, RDF, RDFS
 def create_emonto_new(destination = '~/current_EMONTO.ttl'):
     # Generar el ttl limpio a partir del owl
     g = Graph()
-    g.parse("SentiLib\models\ontologies\Emotional_Human_Ontology.owl")
+    g.parse("SentiLib/assets/Emotional_Human_Ontology.owl")
     g.serialize(destination = destination)
 
 def add_instance(name, emotion, event, intensity, object_type, emotion_category ='RobertPlutchikCategory', origin ='~/current_EMONTO.ttl', destination = '~/current_EMONTO.ttl', annotator = None, modalities = None):

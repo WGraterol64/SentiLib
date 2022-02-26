@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 import torch
 import pickle
-from text import predict_emotions_text
-from images import predict_emotion_image
-from multimodal_dependencies import FusionTransformer, EmbraceNet, Wrapper
+from SentiLib.text import predict_emotions_text
+from SentiLib.images import predict_emotion_image
+from SentiLib.multimodal_dependencies import FusionTransformer, EmbraceNet, Wrapper
 
 def activate(t):
     return (t >= 0.1).int().tolist()[0]
