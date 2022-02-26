@@ -56,6 +56,6 @@ def predict_emotions_audio(filepath, verbose = False):
     if phrase == 'ERROR':
         return 'ERROR'
 
-    return  predict_emotions_text([phrase], verbose = verbose)
+    return  predict_emotions_text(phrase, verbose = verbose)
 
     
