@@ -4,13 +4,13 @@ Python Library for emotion detection in text and images using multimodal functio
 
 This library is an implementation of SENTI-Framework. It's structure and functionality overviews are as follows:
 
-<img src="SentiLib/assets/Senti_framework_min.jpg" alt="SENTI-Lib implementation architecture" width="850"/>
+<img src="SentiLib/assets/Senti_framework_min.jpg" alt="SENTI-Lib implementation architecture" width="600"/>
 
 This library enables emotion recognition recognition in [text](https://www.mdpi.com/1424-8220/21/4/1322) and [images](https://github.com/juan1t0/multimodalDLforER) using deep learning models. It also enables multimodal analysis using [EmbraceNet+](https://www.researchgate.net/publication/353397619_A_Multi-modal_Visual_Emotion_Recognition_Method_to_Instantiate_an_Ontology) merging both modalities.
 
 After executing the required emotion recognition, the emotion, information regarding the person presenting it and the event can be stored in an ontology for further analysis. Fot this we provide [Emonto](https://www.researchgate.net/publication/353397619_A_Multi-modal_Visual_Emotion_Recognition_Method_to_Instantiate_an_Ontology), an extensible emotion ontology whose structure is shown in the next image.
 
-<img src="SentiLib/assets/onto_v4.png" alt="Emonto Ontology" width="850"/>
+<img src="SentiLib/assets/onto_v4.png" alt="Emonto Ontology" width="600"/>
 
 ## Usage
 
