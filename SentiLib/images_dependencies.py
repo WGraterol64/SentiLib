@@ -14,15 +14,15 @@ from tqdm import tqdm
 from deepface import DeepFace
 from deepface.detectors.RetinaFaceWrapper import build_model, detect_face
 
-from SentiLib.image_utils.utils.dataset import Emotic_MultiDB, Rescale, RandomCrop, ToTensor, my_collate
-from SentiLib.image_utils.utils.traineval import train_step, eval
-from SentiLib.image_utils.utils.mat2py import get_skeleton_data
-from SentiLib.image_utils.models.fusion_model import MergeClass
-from SentiLib.image_utils.models.face_net import ShortVGG as VGG
-from SentiLib.image_utils.models.context_net import resnet18 as ABN
-from SentiLib.image_utils.models.skeleton_net import Model as DGCNN
-from SentiLib.image_utils.models.YOLOv3 import YOLOv3
-from SentiLib.image_utils.models.basic_HRnet import SimpleHRNet as HRnet
+from .image_utils.utils.dataset import Emotic_MultiDB, Rescale, RandomCrop, ToTensor, my_collate
+from .image_utils.utils.traineval import train_step, eval
+from .image_utils.utils.mat2py import get_skeleton_data
+from .image_utils.models.fusion_model import MergeClass
+from .image_utils.models.face_net import ShortVGG as VGG
+from .image_utils.models.context_net import resnet18 as ABN
+from .image_utils.models.skeleton_net import Model as DGCNN
+from .image_utils.models.YOLOv3 import YOLOv3
+from .image_utils.models.basic_HRnet import SimpleHRNet as HRnet
 
 original_cats = ['Affection', 'Anger', 'Annoyance', 'Anticipation', 'Aversion', 'Confidence', 'Disapproval',
                 'Disconnection', 'Disquietment', 'Doubt/Confusion', 'Embarrassment', 'Engagement', 'Esteem',
@@ -201,13 +201,14 @@ class Processor:
         return config
     
     def get_data_modalities(self, image, use_tiny_yolo=False):
-        yolo_class_path="SentiLib/image_utils/checkpoints/YOLO/coco.names"
+        curr_directory = os.path.dirname(os.path.realpath(__file__))
+        yolo_class_path= curr_directory + "/image_utils/checkpoints/YOLO/coco.names"
         if use_tiny_yolo:
-            yolo_model_def ="SentiLib/image_utils/checkpoints/YOLO/yolov3-tiny.cfg"
-            yolo_weights_path="SentiLib/image_utils/checkpoints/YOLO/YOLO-weights/yolov3-tiny.weights"
+            yolo_model_def = curr_directory + "/image_utils/checkpoints/YOLO/yolov3-tiny.cfg"
+            yolo_weights_path= curr_directory + "/image_utils/checkpoints/YOLO/YOLO-weights/yolov3-tiny.weights"
         else:
-            yolo_model_def="SentiLib/image_utils/checkpoints/YOLO/yolov3.cfg"
-            yolo_weights_path="SentiLib/image_utils/checkpoints/YOLO/YOLO-weights/yolov3.weights"
+            yolo_model_def= curr_directory + "/image_utils/checkpoints/YOLO/yolov3.cfg"
+            yolo_weights_path= curr_directory + "/image_utils/checkpoints/YOLO/YOLO-weights/yolov3.weights"
         detector = YOLOv3(model_def=yolo_model_def, class_path=yolo_class_path,
                     weights_path=yolo_weights_path, classes=('person',),
                     max_batch_size=16, device=self.device)
@@ -215,7 +216,7 @@ class Processor:
         if detections is None:
             return []
         fa_model = build_model()
-        cpw48_dir = 'SentiLib/image_utils/checkpoints/hrnet_w48_384x288.pth'
+        cpw48_dir =  curr_directory + '/image_utils/checkpoints/hrnet_w48_384x288.pth'
         pose_model = HRnet(48, 17, cpw48_dir, multiperson=False, max_batch_size=2)
 
         all_data = []
@@ -291,11 +292,22 @@ class Arguments:
                  mode= 'inference', 
                  unimodal = False, 
                  modality= 'all', 
-                 configuration= 'SentiLib/image_utils/configs/embracenet_plus.json',
-                 unimodels= 'SentiLib/image_utils/checkpoints/unimodals/',
+                 configuration= None,
+                 unimodels= None,
                  pretrained= True,
-                 multimodel= 'SentiLib/image_utils/checkpoints/multimodal/PP_all_mergenew_last.pth',
-                 threshold= 'SentiLib/image_utils/checkpoints/thresholds_validation.npy'):
+                 multimodel= None,
+                 threshold= None):
+        curr_directory = os.path.dirname(os.path.realpath(__file__))
+
+        if configuration is None:
+            configuration = curr_directory + '/image_utils/configs/embracenet_plus.json'
+        if unimodels is None:
+            unimodels = curr_directory + '/image_utils/checkpoints/unimodals/'
+        if multimodel is None:
+            multimodel = curr_directory + '/image_utils/checkpoints/multimodal/PP_all_mergenew_last.pth'
+        if threshold is None:
+            threshold = curr_directory + '/image_utils/checkpoints/thresholds_validation.npy'
+            
         self.cuda = cuda
         self.inputfile = inputfile
         self.unimodal = unimodal

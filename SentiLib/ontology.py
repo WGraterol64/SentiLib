@@ -2,11 +2,13 @@
 from rdflib import Graph, Namespace, RDF, FOAF, Literal
 from rdflib import URIRef, BNode, Literal, Namespace
 from rdflib.namespace import FOAF, RDF, RDFS
+import os
 
 def create_emonto_new(destination = '~/current_EMONTO.ttl'):
     # Generar el ttl limpio a partir del owl
     g = Graph()
-    g.parse("SentiLib/assets/Emotional_Human_Ontology.owl")
+    curr_directory = os.path.dirname(os.path.realpath(__file__))
+    g.parse(curr_directory+"/assets/Emotional_Human_Ontology.owl")
     g.serialize(destination = destination)
 
 def add_instance(name, emotion, event, intensity, object_type, emotion_category ='RobertPlutchikCategory', origin ='~/current_EMONTO.ttl', destination = '~/current_EMONTO.ttl', annotator = None, modalities = None):

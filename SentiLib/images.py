@@ -1,4 +1,4 @@
-from SentiLib.images_dependencies import Arguments, Processor
+from .images_dependencies import Arguments, Processor
 
 def predict_emotion_image(filepath, verbose = False):
     args = Arguments(inputfile = filepath)

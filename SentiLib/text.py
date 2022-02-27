@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import speech_recognition as sr
+import os
 
 # def predict_json(pred):
 #     emotions = ["anger","anticipation","disgust","fear","joy","love","optimism","pessimism","sadness","surprise","trust"]
@@ -14,6 +15,7 @@ import speech_recognition as sr
 
 def predict_emotions_text(sentence, verbose = False):
     # We do the predictions this way to avoid problems with the memory restrictions
+    dir_path = os.path.dirname(os.path.realpath(__file__))
     models = ['roberta-large-nli-stsb-mean-tokens', 'distilbert-base-nli-mean-tokens', 'bert-large-nli-stsb-mean-tokens']
     embeddings = []
     classifiers = []
@@ -22,11 +24,11 @@ def predict_emotions_text(sentence, verbose = False):
         model = SentenceTransformer(model_name)
         sentence_embeddings = model.encode(sentences)
         # We use the same models trained in the experimental phase
-        clf = pickle.load(open('SentiLib/assets/{0}.clf'.format(model_name),'rb'))
+        clf = pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, model_name),'rb'))
         embeddings.append(clf.predict(sentence_embeddings))
 
     weak_predictions = [np.concatenate((embeddings[0][i], np.concatenate((embeddings[1][i], embeddings[2][i]), axis=0)), axis=0) for i in range(len(embeddings[0]))]
-    clf = pickle.load(open('SentiLib/assets/{0}.clf'.format('Meta_learner'),'rb'))
+    clf = pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, 'Meta_learner'),'rb'))
     pred = clf.predict(weak_predictions)[0]
 
     emotions = ["anger","anticipation","disgust","fear","joy","love","optimism","pessimism","sadness","surprise","trust"]

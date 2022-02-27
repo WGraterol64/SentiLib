@@ -1,4 +1,6 @@
 include SentiLib/assets/*.clf
 include SentiLib/assets/*.owl
 include SentiLib/assets/*.pt
-include SentiLib/image_utils/*
+include SentiLib/image_utils/configs/*
+include SentiLib/image_utils/YOLO-weights/*
+recursive-include SentiLib/image_utils/checkpoints/ *
