@@ -40,7 +40,7 @@ def predict_emotions_text(sentence, verbose = False):
 
     return result
 
-def predict_emotions_text_multi(sentence_list, verbose = False):
+def predict_emotions_text_multiple(sentence_list, verbose = False):
     # We do the predictions this way to avoid problems with the memory restrictions
     dir_path = os.path.dirname(os.path.realpath(__file__))
     models = ['roberta-large-nli-stsb-mean-tokens', 'distilbert-base-nli-mean-tokens', 'bert-large-nli-stsb-mean-tokens']
