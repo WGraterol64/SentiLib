@@ -55,7 +55,7 @@ def predict_emotions_text_multi(sentence_list, verbose = False):
 
     weak_predictions = [np.concatenate((embeddings[0][i], np.concatenate((embeddings[1][i], embeddings[2][i]), axis=0)), axis=0) for i in range(len(embeddings[0]))]
     clf = pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, 'Meta_learner'),'rb'))
-    pred_list = clf.predict(weak_predictions)[0]
+    pred_list = clf.predict(weak_predictions)
 
     emotions = ["anger","anticipation","disgust","fear","joy","love","optimism","pessimism","sadness","surprise","trust"]
     results = []
