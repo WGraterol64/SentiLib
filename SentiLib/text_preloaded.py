@@ -5,31 +5,29 @@ import pickle
 import speech_recognition as sr
 import os
 
-# def predict_json(pred):
-#     emotions = ["anger","anticipation","disgust","fear","joy","love","optimism","pessimism","sadness","surprise","trust"]
-#     result = {}
-#     for k in range(len(emotions)):
-#         result[emotions[k]] = pred[k]
-#     return result
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
+model_dict = {'roberta-large-nli-stsb-mean-tokens' : SentenceTransformer('roberta-large-nli-stsb-mean-tokens'),
+              'distilbert-base-nli-mean-tokens' : SentenceTransformer('distilbert-base-nli-mean-tokens'),
+              'bert-large-nli-stsb-mean-tokens' : SentenceTransformer('bert-large-nli-stsb-mean-tokens')}
+
+classifier_dict = {'roberta-large-nli-stsb-mean-tokens' : pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, 'roberta-large-nli-stsb-mean-tokens'),'rb')),
+                   'distilbert-base-nli-mean-tokens' : pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, 'distilbert-base-nli-mean-tokens'),'rb')),
+                   'bert-large-nli-stsb-mean-tokens' : pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, 'bert-large-nli-stsb-mean-tokens'),'rb')),
+                   'meta-learner' : pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, 'Meta_learner'),'rb'))}
 
 def predict_emotions_text(sentence, verbose = False):
-    # We do the predictions this way to avoid problems with the memory restrictions
-    dir_path = os.path.dirname(os.path.realpath(__file__))
     models = ['roberta-large-nli-stsb-mean-tokens', 'distilbert-base-nli-mean-tokens', 'bert-large-nli-stsb-mean-tokens']
     embeddings = []
     classifiers = []
     sentences = [sentence]
     for model_name in models :
-        model = SentenceTransformer(model_name)
-        sentence_embeddings = model.encode(sentences)
+        sentence_embeddings = model_dict[model_name].encode(sentences)
         # We use the same models trained in the experimental phase
-        clf = pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, model_name),'rb'))
-        embeddings.append(clf.predict(sentence_embeddings))
+        embeddings.append(classifier_dict[model_name].predict(sentence_embeddings))
 
     weak_predictions = [np.concatenate((embeddings[0][i], np.concatenate((embeddings[1][i], embeddings[2][i]), axis=0)), axis=0) for i in range(len(embeddings[0]))]
-    clf = pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, 'Meta_learner'),'rb'))
-    pred = clf.predict(weak_predictions)[0]
+    pred = classifier_dict['meta-learner'].predict(weak_predictions)[0]
 
     emotions = ["anger","anticipation","disgust","fear","joy","love","optimism","pessimism","sadness","surprise","trust"]
     result = {}
@@ -40,23 +38,17 @@ def predict_emotions_text(sentence, verbose = False):
 
     return result
 
-def predict_emotions_text_multi(sentence, verbose = False):
-    # We do the predictions this way to avoid problems with the memory restrictions
-    dir_path = os.path.dirname(os.path.realpath(__file__))
+def predict_emotions_text_multiple(sentence_list, verbose = False):
     models = ['roberta-large-nli-stsb-mean-tokens', 'distilbert-base-nli-mean-tokens', 'bert-large-nli-stsb-mean-tokens']
     embeddings = []
     classifiers = []
-    sentences = [sentence]
     for model_name in models :
-        model = SentenceTransformer(model_name)
-        sentence_embeddings = model.encode(sentences)
+        sentence_embeddings = model_dict[model_name].encode(sentence_list)
         # We use the same models trained in the experimental phase
-        clf = pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, model_name),'rb'))
-        embeddings.append(clf.predict(sentence_embeddings))
+        embeddings.append(classifier_dict[model_name].predict(sentence_embeddings))
 
     weak_predictions = [np.concatenate((embeddings[0][i], np.concatenate((embeddings[1][i], embeddings[2][i]), axis=0)), axis=0) for i in range(len(embeddings[0]))]
-    clf = pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, 'Meta_learner'),'rb'))
-    pred_list = clf.predict(weak_predictions)[0]
+    pred_list = classifier_dict['meta-learner'].predict(weak_predictions)
 
     emotions = ["anger","anticipation","disgust","fear","joy","love","optimism","pessimism","sadness","surprise","trust"]
     results = []
