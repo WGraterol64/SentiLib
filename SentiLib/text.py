@@ -40,16 +40,15 @@ def predict_emotions_text(sentence, verbose = False):
 
     return result
 
-def predict_emotions_text_multi(sentence, verbose = False):
+def predict_emotions_text_multi(sentence_list, verbose = False):
     # We do the predictions this way to avoid problems with the memory restrictions
     dir_path = os.path.dirname(os.path.realpath(__file__))
     models = ['roberta-large-nli-stsb-mean-tokens', 'distilbert-base-nli-mean-tokens', 'bert-large-nli-stsb-mean-tokens']
     embeddings = []
     classifiers = []
-    sentences = [sentence]
     for model_name in models :
         model = SentenceTransformer(model_name)
-        sentence_embeddings = model.encode(sentences)
+        sentence_embeddings = model.encode(sentence_list)
         # We use the same models trained in the experimental phase
         clf = pickle.load(open('{0}/assets/{1}.clf'.format(dir_path, model_name),'rb'))
         embeddings.append(clf.predict(sentence_embeddings))
